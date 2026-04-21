@@ -13,7 +13,7 @@ using namespace std;
  * 如果都相同，就看 s3 - 1 能否被 s1 - 1 s2 表示  或   s3 - 1 能否被 s1 和 s2 - 1 表示
  * 
  */
-class Solution {
+class Solution1 {
 public:
     bool isInterleave(string s1, string s2, string s3) {
         int len1 = s1.size(), len2 = s2.size();
@@ -47,8 +47,42 @@ public:
     }
 };
 
+/**
+ * 空间优化
+ */
+class Solution {
+public:
+    bool isInterleave(string s1, string s2, string s3) {
+        if(s1.size() < s2.size()) return isInterleave(s2, s1, s3); //选较短的作为s2
+        int len1 = s1.size(), len2 = s2.size();
+        if(s3.size() != len1 + len2) return false;
+        vector<bool> dp(len2 + 1, false);
+        dp[0] = true;
+        for(int i = 1; i < len2 + 1; i++) {
+            dp[i] = dp[i - 1] && s2[i - 1] == s3[i - 1];
+        }
+        for(int i = 1; i < len1 + 1; i++) {
+            dp[0] = dp[0] && s1[i - 1] == s3[i - 1];
+            for(int j = 1; j < len2 + 1; j++) {
+                char c = s3[i + j - 1];
+                if(c != s1[i - 1] && c != s2[j - 1]) {
+                    dp[j] = false;
+                } else if(c == s1[i - 1] && c != s2[j - 1]){
+                    dp[j] = dp[j];
+                } else if(c != s1[i - 1] && c == s2[j - 1]) {
+                    dp[j] = dp[j - 1];
+                } else {
+                    dp[j] = dp[j] || dp[j - 1];
+                }
+            }
+        }
+        return dp[len2];
+    }
+};
+
+
 int main() {
-    string s1 = "a", s2 = "", s3 = "a";
+    string s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac";
     Solution s;
     s.isInterleave(s1, s2, s3);
 }
