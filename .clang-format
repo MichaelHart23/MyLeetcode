@@ -1,0 +1,22 @@
+# .clang-format
+# 基于 Google 风格进行定制
+BasedOnStyle: Google
+
+# 缩进宽度
+IndentWidth: 4
+# 访问修饰符 (public:, private:) 的缩进
+AccessModifierOffset: -4
+
+# 括号风格: 将大括号放在同一行 (Attach) 或新行
+BreakBeforeBraces: Attach
+
+# 列数限制，超过该限制会尝试换行
+ColumnLimit: 120
+# 是否允许短函数、短 if 语句等在一行
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: true
+AllowShortBlocksOnASingleLine: true  # 允许将短代码块压缩到一行
+# AllowShortLambdasOnASingleLine: SLS_All
+
+# 指针或引用的对齐方式
+PointerAlignment: Left
