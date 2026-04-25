@@ -1,12 +1,12 @@
-#include <vector>
-#include <unordered_set>
 #include <deque>
+#include <unordered_set>
+#include <vector>
 
 using namespace std;
 
 struct pair_hash {
     template <class T1, class T2>
-    std::size_t operator() (const std::pair<T1, T2>& p) const {
+    std::size_t operator()(const std::pair<T1, T2>& p) const {
         auto h1 = std::hash<T1>{}(p.first);
         auto h2 = std::hash<T2>{}(p.second);
         // 简单的组合方式，也可以使用 boost::hash_combine
@@ -16,72 +16,69 @@ struct pair_hash {
 
 class Solution {
 public:
-  struct Island {
-    unordered_set<pair<int, int>, pair_hash> lands;
-    void add(int row, int col) { lands.insert(make_pair(row, col));}
-    void add(pair<int, int> p) { lands.insert(p);}
-    bool contains(int row, int col) { return lands.contains(make_pair(row, col)); }
-    bool contains(pair<int, int> p) { return lands.contains(p); }
-  };
-  vector<Island> islands;
-  int rows;
-  int cols;
-  int x[4];
-  int y[4];
+    struct Island {
+        unordered_set<pair<int, int>, pair_hash> lands;
+        void add(int row, int col) { lands.insert(make_pair(row, col)); }
+        void add(pair<int, int> p) { lands.insert(p); }
+        bool contains(int row, int col) { return lands.contains(make_pair(row, col)); }
+        bool contains(pair<int, int> p) { return lands.contains(p); }
+    };
+    vector<Island> islands;
+    int rows;
+    int cols;
+    int x[4];
+    int y[4];
 
-  Solution() {
-    x[0] = 1, y[0] = 0;
-    x[1] = 0, y[1] = 1;
-    x[2] = -1, y[2] = 0;
-    x[3] = 0, y[3] = -1;
-  }
-
-  void isLand(vector<vector<char>>& grid,  deque<pair<int, int>>& que, Island& island, int row, int col) {
-    pair<int, int> p = make_pair(row, col);
-    //没越界，是land，而且还没被包含在island中
-    if(row >= 0 && col >= 0 && row < rows && col < cols && grid[row][col] == '1' && !island.contains(p)) {
-      que.push_back(p);
-      island.add(p);
+    Solution() {
+        x[0] = 1, y[0] = 0;
+        x[1] = 0, y[1] = 1;
+        x[2] = -1, y[2] = 0;
+        x[3] = 0, y[3] = -1;
     }
-  }
 
-  void bfs(vector<vector<char>>& grid, int row, int col) {
-    deque<pair<int, int>> que;
-    Island island;
-    que.push_back(make_pair(row, col));
-    while(!que.empty()) {
-      auto [row, col] = que.front();
-      que.pop_front();
-      for(int i = 0; i < 4; i++)
-        isLand(grid, que, island,row + x[i], col + y[i]);
-    }
-    islands.push_back(island);
-  }
-
-  //该陆地是否被探索过了
-  bool isExplored(int row, int col) {
-    for(auto& island : islands) {
-      if(island.contains(make_pair(row, col))) 
-        return true;
-    }
-    return false;
-  }
-  
-  int numIslands(vector<vector<char>>& grid) {
-    rows = grid.size(), cols = grid[0].size();
-    int res = 0;
-    for(int i = 0; i < rows; i++) {
-      for(int j = 0; j < cols; j++) {
-        if(grid[i][j] == '1' && !isExplored(i, j)) {
-          bfs(grid, i, j);
-          res++;
+    void isLand(vector<vector<char>>& grid, deque<pair<int, int>>& que, Island& island, int row, int col) {
+        pair<int, int> p = make_pair(row, col);
+        // 没越界，是land，而且还没被包含在island中
+        if (row >= 0 && col >= 0 && row < rows && col < cols && grid[row][col] == '1' && !island.contains(p)) {
+            que.push_back(p);
+            island.add(p);
         }
-      }
     }
-    return res;
-  }
-};
 
+    void bfs(vector<vector<char>>& grid, int row, int col) {
+        deque<pair<int, int>> que;
+        Island island;
+        que.push_back(make_pair(row, col));
+        while (!que.empty()) {
+            auto [row, col] = que.front();
+            que.pop_front();
+            for (int i = 0; i < 4; i++) isLand(grid, que, island, row + x[i], col + y[i]);
+        }
+        islands.push_back(island);
+    }
+
+    // 该陆地是否被探索过了
+    bool isExplored(int row, int col) {
+        for (auto& island : islands) {
+            if (island.contains(make_pair(row, col))) return true;
+        }
+        return false;
+    }
+
+    int numIslands(vector<vector<char>>& grid) {
+        rows = grid.size(), cols = grid[0].size();
+        int res = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == '1' && !isExplored(i, j)) {
+                    bfs(grid, i, j);
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};
 
 /**
  * 优化：
@@ -90,37 +87,68 @@ public:
  */
 
 class Solution {
-  int x[4];
-  int y[4];
+    int x[4];
+    int y[4];
+
 public:
-  Solution() {
-    x[0] = 1, y[0] = 0;
-    x[1] = 0, y[1] = 1;
-    x[2] = -1, y[2] = 0;
-    x[3] = 0, y[3] = -1;
-  }
-  int numIslands(vector<vector<char>>& grid) {
-    int rows = grid.size(), cols = grid[0].size(), res = 0;
-
-    auto dfs = [&](this auto&& dfs, int row, int col) {
-      if(row < 0 || row >= rows || col < 0 || col >= cols || grid[row][col] != '1') {
-        return;
-      }
-      grid[row][col] = '2';
-      for(int i = 0; i < 4; i++) {
-        dfs(row + x[i], col + y[i]);
-      }
-    };
-
-    for(int row = 0; row < rows; row++) {
-      for(int col = 0; col < cols; col++) {
-        if(grid[row][col] == '1') {
-          dfs(row, col);
-          res++;
-        }
-      }
+    Solution() {
+        x[0] = 1, y[0] = 0;
+        x[1] = 0, y[1] = 1;
+        x[2] = -1, y[2] = 0;
+        x[3] = 0, y[3] = -1;
     }
+    int numIslands(vector<vector<char>>& grid) {
+        int rows = grid.size(), cols = grid[0].size(), res = 0;
 
-    return res;
-  }
+        auto dfs = [&](this auto&& dfs, int row, int col) {
+            if (row < 0 || row >= rows || col < 0 || col >= cols || grid[row][col] != '1') { return; }
+            grid[row][col] = '2';
+            for (int i = 0; i < 4; i++) { dfs(row + x[i], col + y[i]); }
+        };
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (grid[row][col] == '1') {
+                    dfs(row, col);
+                    res++;
+                }
+            }
+        }
+
+        return res;
+    }
 };
+
+
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int rows = grid.size(), cols = grid[0].size(), res = 0;
+        int dx[4] = {0, 1, 0, -1};
+        int dy[4] = {1, 0, -1, 0};
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (grid[row][col] == '1') {
+                    deque<pair<int, int>> que;
+                    que.push_back({row, col});
+                    grid[row][col] = '2';
+                    while(!que.empty()) {
+                        pair<int, int> p = que.front();
+                        que.pop_front();
+                        int x = p.first, y = p.second;
+                        for(int i = 0; i < 4; i++) {
+                            int xx = x + dx[i], yy = y + dy[i];
+                            if(xx >= 0 && xx < rows && yy >= 0 && yy < cols && grid[xx][yy] == '1') {
+                                que.push_back({xx, yy});
+                                grid[xx][yy] = '2';
+                            }
+                        }
+                    }
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};
+

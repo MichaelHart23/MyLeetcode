@@ -13,9 +13,10 @@ BreakBeforeBraces: Attach
 # 列数限制，超过该限制会尝试换行
 ColumnLimit: 120
 # 是否允许短函数、短 if 语句等在一行
-AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: true
-AllowShortBlocksOnASingleLine: true  # 允许将短代码块压缩到一行
+AllowShortBlocksOnASingleLine: false  # 允许将短代码块压缩到一行
+AllowShortEnumsOnASingleLine: false
 # AllowShortLambdasOnASingleLine: SLS_All
 
 # 指针或引用的对齐方式
