@@ -47,6 +47,7 @@ public:
  * 20260425重做，对于Anagrams问题，思路就是每个字符的计数作为哈希值
  * 或者排序做哈希值也行，不过那样时间复杂度是O(log n)l
  * 和49题一样
+ * 相当于针对小写字符的特化哈希表
  */
 class Solution {
 public:
@@ -54,7 +55,7 @@ public:
         int pSize = p.size(), sSize = s.size();
         vector<int> ans;
         if(pSize > sSize) return ans;
-        string ph(26, '0'), sh(26, '0');
+        string ph(26, '0'), sh(26, '0'); //相当于针对小写字符的特化哈希表
         for(char c : p) {
             ph[c - 'a']++;
         }

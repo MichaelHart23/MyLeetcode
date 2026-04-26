@@ -1,120 +1,101 @@
-#include<vector>
-#include<string>
-#include<unordered_set>
-#include <set>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-/*
-class Solution {
+class Solution1 {
 public:
-  string minWindow(string s, string t) {
-    int m = s.size(), n = t.size();
-    if(m < n)
-      return "";
-    unordered_multiset<char> origin;
-    for(int i = 0; i < n; i++) {
-      origin.insert(t[i]);
-    }
-    string res;
-    int first = 0, second = 0, last = 0;
-    while(!origin.contains(s[first]))
-      first++;
-    while(true) {
-      unordered_multiset<char> copy(origin);
-      unordered_multiset<char>::iterator it;
-      for(int i = first; i < m; i++) {
-        it = copy.find(s[i]);
-        if(it != copy.end()) {
-          if(second == 0 && copy.size() < n) {
-            second = i;
-          }
-          copy.erase(it);
+    string minWindow(string s, string t) {
+        int m = s.size(), n = t.size();
+        if (m < n) return "";
+        unordered_multiset<char> origin;
+        for (int i = 0; i < n; i++) {
+            origin.insert(t[i]);
         }
-        if(copy.empty()) {
-          last = i;
-          break;
+        string res;
+        int first = 0, second = 0, last = 0;
+        while (!origin.contains(s[first])) first++;
+        while (true) {
+            unordered_multiset<char> copy(origin);
+            unordered_multiset<char>::iterator it;
+            for (int i = first; i < m; i++) {
+                it = copy.find(s[i]);
+                if (it != copy.end()) {
+                    if (second == 0 && copy.size() < n) {
+                        second = i;
+                    }
+                    copy.erase(it);
+                }
+                if (copy.empty()) {
+                    last = i;
+                    break;
+                }
+            }
+            if (!copy.empty()) break;
+            if (res.size() > last - first + 1) {
+                res = s.substr(first, last - first + 1);
+            }
+            first = second;
         }
-      }
-      if(!copy.empty())
-        break;
-      if(res.size() > last - first + 1) {
-        res = s.substr(first, last - first + 1);
-      }
-      first = second;
+
+        return res;
     }
-
-
-    return res;
-    
-    
-      
-  }
 };
-
 
 class Solution2 {
 public:
-  string minWindow(string s, string t) {
-    int m = s.size(), n = t.size();
-    if(m < n || n == 0)
-      return "";
-    unordered_multiset<char> origin;
-    for(int i = 0; i < n; i++) {
-      origin.insert(t[i]);
-    }
-    string res;
-    int first = 0, last = 0;
-    while(!origin.contains(s[first])) //找到第一个t的字符
-      first++;
-    int second = first;
-    unordered_multiset<char>::iterator it;
-    for(int i = first; i < m; i++) {
-      it = origin.find(s[i]);
-      if(it != origin.end()) {
-          if(second == first && origin.size() < n) {
-            second = i;
-          }
-          origin.erase(it);   
-      }
-      if(origin.empty()) {
-          last = i;
-          break;
-      }
-    }
-    res = s.substr(first, last - first + 1);
-    while(true) {
-      unordered_multiset<char> origin;
-      for(int i = first + 1; i < m; i++) {
-        it = origin.find(s[i]);
-        if(it != origin.end()) {
-          if(second <= first) {
-            second = i;
-          }
-          origin.erase(it);   
+    string minWindow(string s, string t) {
+        int m = s.size(), n = t.size();
+        if (m < n || n == 0) return "";
+        unordered_multiset<char> origin;
+        for (int i = 0; i < n; i++) {
+            origin.insert(t[i]);
         }
-        if(origin.empty()) {
-          last = i;
-          break;
+        string res;
+        int first = 0, last = 0;
+        while (!origin.contains(s[first]))  // 找到第一个t的字符
+            first++;
+        int second = first;
+        unordered_multiset<char>::iterator it;
+        for (int i = first; i < m; i++) {
+            it = origin.find(s[i]);
+            if (it != origin.end()) {
+                if (second == first && origin.size() < n) {
+                    second = i;
+                }
+                origin.erase(it);
+            }
+            if (origin.empty()) {
+                last = i;
+                break;
+            }
         }
-      }
-      if(!origin.empty())
-        break;
-      if(res.size() > last - first + 1) {
         res = s.substr(first, last - first + 1);
-      }
-      origin.insert(s[first]);
-      first = last;
+        while (true) {
+            unordered_multiset<char> origin;
+            for (int i = first + 1; i < m; i++) {
+                it = origin.find(s[i]);
+                if (it != origin.end()) {
+                    if (second <= first) {
+                        second = i;
+                    }
+                    origin.erase(it);
+                }
+                if (origin.empty()) {
+                    last = i;
+                    break;
+                }
+            }
+            if (!origin.empty()) break;
+            if (res.size() > last - first + 1) {
+                res = s.substr(first, last - first + 1);
+            }
+            origin.insert(s[first]);
+            first = last;
+        }
+
+        return res;
     }
-
-
-    return res;
-    
-    
-      
-  }
 };
-*/
 
 /* 整体思路是一个滑动窗口，每当窗口拓展至可以囊括t时，即得到一个符合条件的子串时，和此前的子串对比长度，选择
  * 长度较小的子串。
@@ -123,82 +104,144 @@ public:
  */
 class Solution3 {
 public:
-  string minWindow(string s, string t) {
-    int m = s.size(), n = t.size();
-    string res = "";
-    if(m < n || n == 0)
-      return res;
-    unordered_multiset<char> origin; //存储t字符串
-    for(int i = 0; i < n; i++) {
-      origin.insert(t[i]);
+    string minWindow(string s, string t) {
+        int m = s.size(), n = t.size();
+        string res = "";
+        if (m < n || n == 0) return res;
+        unordered_multiset<char> origin;  // 存储t字符串
+        for (int i = 0; i < n; i++) {
+            origin.insert(t[i]);
+        }
+        set<int> index_set;  // 存储s字符串中匹配t字符串的字符的index，即窗口和窗口中对t字符的标记
+        unordered_multiset<char>::iterator it;
+        for (int i = 0; i < m; i++) {
+            it = origin.find(s[i]);
+            if (it != origin.end()) {  // 每当在s中找到一个在t中的字符，把索引放到index_set，把字符从origin中删去
+                index_set.insert(i);
+                origin.erase(it);
+            }
+            if (origin.empty()) {  // 找到一个符合条件的子串
+                int first = *index_set.begin(), last = *index_set.rbegin();
+                if (res.size() == 0 || res.size() > last - first + 1) res = s.substr(first, last - first + 1);
+                index_set.erase(first);   // 更新窗口左边界
+                origin.insert(s[first]);  // 把去掉的窗口左边界的字符重新加入
+            }
+        }
+        return res;
     }
-    set<int> index_set;   //存储s字符串中匹配t字符串的字符的index，即窗口和窗口中对t字符的标记
-    unordered_multiset<char>::iterator it;
-    for(int i = 0; i < m; i++) {
-      it = origin.find(s[i]);
-      if(it != origin.end()) { //每当在s中找到一个在t中的字符，把索引放到index_set，把字符从origin中删去
-        index_set.insert(i);
-        origin.erase(it);
-      }
-      if(origin.empty()) { //找到一个符合条件的子串
-        int first = *index_set.begin(), last = *index_set.rbegin();
-        if(res.size() == 0 || res.size() > last - first + 1)
-          res = s.substr(first, last - first + 1);
-        index_set.erase(first);//更新窗口左边界
-        origin.insert(s[first]); //把去掉的窗口左边界的字符重新加入
-      }
-    }
-    return res;
-  }
 };
 
 /* Solutioin3 整体的滑动窗口策略大方向是没问题的，问题出在了窗口的更新与判断窗口是否包含t上
  * 存在一种可能，去掉左边界后的新窗口以及包含了t，但我的方法还在找下一个和刚去掉的字符
- * 
+ *
  * 换言之，我从一开始就没想明白窗口要怎么滑，一个新窗口的判定是这个窗口是否包含了t，而非能找到一个新的更被去掉的
  * 字符
  * 那现在这个题目的聚焦点就清晰了，就是如何判断窗口包含t
  */
-
-
 class Solution4 {
 public:
-  string minWindow(string s, string t) {
-    int m = s.size(), n = t.size(), less = 0;
-    if(m < n || n == 0)
-      return "";
-    int cnt[128] = {0};
-    for(char c : t) { //统计t中各个字符出现的次数
-      if(cnt[c] == 0) //当c在t中出现，则有一个字符在空窗口中出现的次数小于t中出现的次数
-        less++;       //窗口中有 less 种字母的出现次数小于 t 中字母的出现次数
-      cnt[c]++;
-    }
-    int ansLeft = -1, ansRight = m, left = 0, right = 0;
-    for( ; right < m; right++) {
-      char c = s[right]; //右端字符
-      cnt[c]--; 
-      if(cnt[c] == 0) { //该字符在窗口中的出现次数和t中的出现次数相同
-        less--;
-      }
-      while(less == 0) {//当窗口包含t时，更新左端点到不包含t的情况
-        if(right - left < ansRight - ansLeft) {
-          ansRight = right;
-          ansLeft = left;
+    string minWindow(string s, string t) {
+        int m = s.size(), n = t.size(), less = 0;
+        if (m < n || n == 0) return "";
+        int cnt[128] = {0};
+        for (char c : t) {  // 统计t中各个字符出现的次数
+            if (cnt[c] == 0)  // 当c在t中出现，则有一个字符在空窗口中出现的次数小于t中出现的次数
+                less++;  // 窗口中有 less 种字母的出现次数小于 t 中字母的出现次数
+            cnt[c]++;
         }
-        char l = s[left];
-        if(cnt[l] == 0) { //这个条件说明该字符在窗口中出现的次数和在t中出现的次数相同
-          less++;   //于是当窗口移除这个字符时，窗口相比于t，少了一个该字符
+        int ansLeft = -1, ansRight = m, left = 0, right = 0;
+        for (; right < m; right++) {
+            char c = s[right];  // 右端字符
+            cnt[c]--;
+            if (cnt[c] == 0) {  // 该字符在窗口中的出现次数和t中的出现次数相同
+                less--;
+            }
+            while (less == 0) {  // 当窗口包含t时，更新左端点到不包含t的情况
+                if (right - left < ansRight - ansLeft) {
+                    ansRight = right;
+                    ansLeft = left;
+                }
+                char l = s[left];
+                if (cnt[l] == 0) {  // 这个条件说明该字符在窗口中出现的次数和在t中出现的次数相同
+                    less++;         // 于是当窗口移除这个字符时，窗口相比于t，少了一个该字符
+                }
+                left++;
+                cnt[l]++;
+            }
         }
-        left++;
-        cnt[l]++;
-      }
+        if (ansLeft == -1)
+            return "";
+        else
+            return s.substr(ansLeft, ansRight - ansLeft + 1);
     }
-    if(ansLeft == -1) return "";
-    else return s.substr(ansLeft, ansRight - ansLeft + 1);
-  }
+};
+
+
+/**
+ * 20260426实现
+ * 针对由字母组成的字符串的特化哈希表 49，438也是这样
+ * 具体实现的思路何solution4一样，即滑动窗口的滑法。
+ * 不过在我意识到本题目同时有大写字母何小写字母之后，我用了unordered_map，而上面直接用了
+ * 大小为128的数字作为哈希表
+ * 而且solution4牛逼的地方是：只用一个哈希表，用数字的加减判断包不包含
+ */
+class Solution5 {
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char, int> tar;
+        unordered_map<char, int> cur;
+        // 非必须，因为会被自动初始化为0
+        // for(int i = 'a'; i <= 'z'; i++) {
+        //     tar[i] = 0;
+        //     tar[i - 'a' + 'A'] = 0;
+        //     cur[i] = 0;
+        //     cur[i - 'a' + 'A'] = 0;
+        // }
+        for(char c : t) {
+            tar[c]++;
+        }
+        int size = s.size();
+        int left = 0, right = 0;
+        while(left < size && tar[s[left]] == 0) {
+            left++;
+        }
+        right = left;
+        string ans;
+        int ansLen = INT_MAX;
+        auto contain = [&tar, &cur]() {
+            for(auto [c, y] : tar) {
+                if(y > cur[c]) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        while(true) {
+            if(!contain()) {
+                if(right >= size) {
+                    break;
+                }
+                cur[s[right]]++;
+                right++;
+            } else {
+                int len = right - left;
+                if(len < ansLen) {
+                    ans = s.substr(left, len);
+                    ansLen = len;
+                }
+                cur[s[left]]--;
+                left++;
+                while(tar[s[left]] < cur[s[left]]) {
+                    cur[s[left]]--;
+                    left++;
+                }
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {
-  Solution3 s;
-  s.minWindow("ADOBECODEBANC", "ABC");
+    Solution5 s;
+    s.minWindow("ADOBECODEBANC", "ABC");
 }

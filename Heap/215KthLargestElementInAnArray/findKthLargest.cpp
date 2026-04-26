@@ -91,7 +91,6 @@ public:
  * 这tm才叫相向双指针
  * 比pivot小的存到l那里，比pivot大的存到r那里
  */
-
 class Solution4 {
     pair<int, int> quickSort(vector<int>& v, int left, int right) {
         int pivot = v[left + rand() % (right - left + 1)]; //随机选择

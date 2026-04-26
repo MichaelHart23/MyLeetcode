@@ -4,7 +4,7 @@ using namespace std;
 
 vector<vector<string>> groupAnagrams(vector<string>& strs) {
     string s;
-    s.assign(26, '0');
+    s.assign(26, '0'); //相当于针对小写字符的特化哈希表
     unordered_map<string, vector<string>> map;
     for (string& str : strs) {
         string key(s);
