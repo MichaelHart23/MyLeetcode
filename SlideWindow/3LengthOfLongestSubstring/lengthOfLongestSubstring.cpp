@@ -50,4 +50,34 @@ public:
     }
 };
 
+/**
+ * 20260711 手工哈希表 + 滑动窗口，比用unordered set要快很多
+ */
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int count[128] = {0};
+        int n = s.size();
+        int left = 0, right = 0;
+        int res = 0;
+        while (right < n) {
+            count[s[right]]++;
+            if (count[s[right]] == 1) {
+                right++;
+                continue;
+            }
+            res = max(res, right - left);
+            right++;
+            while (left < right && count[s[left]] == 1) {
+                count[s[left]]--;
+                left++;
+            }
+            count[s[left]]--;
+            left++;
+        }
+        res = max(right - left, res);
+        return res;
+    }
+};
+
 int main() { std::cout << sizeof(size_t) << std::endl; }

@@ -243,6 +243,50 @@ void printVector(vector<int>& v) {
     }
     cout << endl;
 }
+
+/**
+ * 20260711
+ * 排序做法是nlogn的复杂度，Solution1里的用堆做也是nlogn的复杂度，但这个题目可以做到nlogk的复杂度
+ * 或者说取决于k是否大于n/2，可以做到nlogk或nlog(n-k)的复杂度
+ * 如果用最大堆做，就是nlogk的复杂度，维护一个大小为n-k+1的最大堆, 堆里的元素是最小的n-k+1个元素
+ * 如果用最小堆做，那就是nlog(n-k)的复杂度，维护一个大小为k的最小堆，堆里的元素是最大的k个元素
+ */
+class Solution5 {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int> maxHeap;
+        int n = nums.size();
+        int heapSize = n - k + 1;
+        for (int i = 0; i < heapSize; i++) {
+            maxHeap.push(nums[i]);
+        }
+        for (int i = heapSize; i < n; i++) {
+            if (nums[i] < maxHeap.top()) {
+                maxHeap.pop();
+                maxHeap.push(nums[i]);
+            }
+        }
+        return maxHeap.top();
+    }
+};
+
+class Solution6 {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, greater<int>> minHeap;
+        int n = nums.size();
+        for (int i = 0; i < k; i++) {
+            minHeap.push(nums[i]);
+        }
+        for (int i = k; i < n; i++) {
+            if (nums[i] > minHeap.top()) {
+                minHeap.pop();
+                minHeap.push(nums[i]);
+            }
+        }
+        return minHeap.top();
+    }
+};
 int main() {
     vector<int> v = {9, 5, 6, 4, 1, 3, 7, 2, 8, 10};
     quickSort3(v);
