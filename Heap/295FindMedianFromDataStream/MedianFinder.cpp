@@ -71,7 +71,7 @@ public:
  * 0x3f的简洁实现：
  */
 class MedianFinder {
-    priority_queue<int> left;
+    priority_queue<int> left; // 最大堆
     priority_queue<int, vector<int>, greater<int>> right;
 public:
     MedianFinder() {
@@ -89,14 +89,56 @@ public:
             right.push(left.top());
             left.pop();
         }
-
     }
     
     double findMedian() {
         if(left.size() == right.size()) {
             return (left.top() + right.top()) / 2.0;
         }
-        return left.top();
+        return left.top(); // 最大堆多1
+    }
+};
+
+/**
+ * 20260714  只允许两种情况，两堆的大小一样；最大堆比最小堆多1
+ */
+class MedianFinder {
+    priority_queue<int> maxHeap; // 最大堆存较小的一半
+    priority_queue<int, vector<int>, greater<int>> minHeap; // 最小堆存较大的一半
+public:
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        if (maxHeap.size() == 0) {
+            maxHeap.push(num);
+            return;
+        }
+        if (num <= maxHeap.top()) {
+            maxHeap.push(num);
+        } else {
+            minHeap.push(num);
+        }
+        if (maxHeap.size() > minHeap.size()) {
+            while (maxHeap.size() - minHeap.size() > 1) {
+                minHeap.push(maxHeap.top());
+                maxHeap.pop();
+            }
+        } else {
+            while (minHeap.size() > maxHeap.size()) {
+                maxHeap.push(minHeap.top());
+                minHeap.pop();
+            }
+        }
+    }
+    
+    double findMedian() {
+        if (minHeap.size() == maxHeap.size()) {
+            return ((double)maxHeap.top() + minHeap.top()) / 2;
+        } else {
+            return maxHeap.top();
+        }
     }
 };
 
