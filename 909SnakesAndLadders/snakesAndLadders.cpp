@@ -13,9 +13,54 @@ using namespace std;
  * 我能否证明这种做法是正确的呢？
  * 
  * 说是有BFS做法，BFS怎么做？
+ * 20260731
+ * 枚举走一步后有哪些可能的结果，走两步后有哪些可能的结果。指数级增长
  */
 class Solution {
 public:
     int snakesAndLadders(vector<vector<int>>& board) {
+        int n = board.size();
+        vector<int> list(n * n + 1, -1);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] != -1) {
+                    int a = n - i; // 自下向上第a行
+                    int b = j + 1; // 自左到右第b列
+                    // 计算当前位置的序号
+                    int num = (a - 1) * n;
+                    num += a % 2 != 0 ? b : n - b + 1;
+                    list[num] = board[i][j];
+                }
+            }
+        }
+        deque<int> que; // 当前的步数能到达哪些位置
+        que.push_back(1);
+        vector<bool> reached(n * n + 1, false);
+        reached[1] = true;
+        int steps = 0;
+        while (!que.empty()) {
+            steps++;
+            deque<int> newQue;
+            for (int i : que) {
+                for (int j = 1; j <= 6; j++) {
+                    int pos = 0;
+                    if (list[i + j] != -1) {
+                        pos = list[i + j];
+                    } else {
+                        pos = i + j;
+                    }
+                    if (reached[pos]) {
+                        continue;
+                    }
+                    reached[pos] = true;
+                    newQue.push_back(pos);
+                    if (pos == n * n) {
+                        return steps;
+                    }
+                }
+            }
+            que = std::move(newQue);
+        }
+        return -1;
     }
 };
