@@ -20,6 +20,7 @@ class Solution {
 public:
     int snakesAndLadders(vector<vector<int>>& board) {
         int n = board.size();
+        // 把二维图转化为一维
         vector<int> list(n * n + 1, -1);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
